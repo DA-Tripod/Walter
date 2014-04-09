@@ -1,0 +1,335 @@
+//________________________________________________________________________________________
+//processing Anteil
+
+import processing.serial.*;
+import java.io.*;
+int mySwitch=0;
+int counter=0;
+String [] subtext;
+Serial myPort;
+
+
+void setup(){
+ //wenn mySwitch=1 => programm liest text file,wenn mySwitch = 0 => ausgeschalten
+ mySwitch=1;
+ 
+ //Connection zu Serial port
+ myPort = new Serial(this, "COM5", 9600);
+ myPort.bufferUntil('\n');
+}
+
+void draw() {
+       if (mySwitch>0){
+
+         //aufruf zum lesen der datei
+       readData("C:/arduinoTest.txt");
+ 
+ 
+         //datei nur lesen wenn wir wollen, nicht ständig
+       mySwitch=0;
+       }
+ 
+         //nur neue Daten sende; if erlaubt es neue Daten an Arduino zu senden
+       if(counter<subtext.length){
+ 
+          // neue nummer inSerial schreiben und an arduino senden. 0.5 sek daley
+       myPort.write(subtext[counter]);
+       delay(500);
+       myPort.write('0');
+       delay(100);
+ 
+       //steigende nummer, um neue zahl aus .txt zu senden
+       counter++;
+       } else{
+ 
+         //wenn keine zahlen mehr => erst wieder in 5 sekunden lesen
+       delay(5000);
+       mySwitch=1;
+   }
+} 
+
+
+//funktion um aus txt oder cvs zu lesen
+void readData(String myFileName){
+ 
+       File file=new File(myFileName);
+       BufferedReader br=null;
+ 
+     try{
+       br=new BufferedReader(new FileReader(file));
+       String text=null;
+ 
+ // jede zeile bis zum ende der datei lesen
+       while((text=br.readLine())!=null){
+         
+ //jede Zeile mithilfe der Kommas auftrennen
+       subtext = splitTokens(text,",");
+       }
+       
+       }catch(FileNotFoundException e){
+         
+       e.printStackTrace();
+       
+       }catch(IOException e){
+        
+       e.printStackTrace();
+       
+        }finally{
+       try {
+       if (br != null){
+        br.close();
+       }
+       } catch (IOException e) {
+     e.printStackTrace();
+   }
+ }
+}
+
+import processing.serial.*;
+import java.io.*;
+int mySwitch=0;
+int counter=0;
+String [] subtext;
+Serial myPort;
+
+
+void setup(){
+ //wenn mySwitch=1 => programm liest text file,wenn mySwitch = 0 => ausgeschalten
+ mySwitch=1;
+ 
+ //Connection zu Serial port
+ myPort = new Serial(this, "COM5", 9600);
+ myPort.bufferUntil('\n');
+}
+
+void draw() {
+       if (mySwitch>0){
+
+         //aufruf zum lesen der datei
+       readData("C:/arduinoTest.txt");
+ 
+ 
+         //datei nur lesen wenn wir wollen, nicht ständig
+       mySwitch=0;
+       }
+ 
+         //nur neue Daten sende; if erlaubt es neue Daten an Arduino zu senden
+       if(counter<subtext.length){
+ 
+          // neue nummer inSerial schreiben und an arduino senden. 0.5 sek daley
+       myPort.write(subtext[counter]);
+       delay(500);
+       myPort.write('0');
+       delay(100);
+ 
+       //steigende nummer, um neue zahl aus .txt zu senden
+       counter++;
+       } else{
+ 
+         //wenn keine zahlen mehr => erst wieder in 5 sekunden lesen
+       delay(5000);
+       mySwitch=1;
+   }
+} 
+
+
+//funktion um aus txt oder cvs zu lesen
+void readData(String myFileName){
+ 
+       File file=new File(myFileName);
+       BufferedReader br=null;
+ 
+     try{
+       br=new BufferedReader(new FileReader(file));
+       String text=null;
+ 
+ // jede zeile bis zum ende der datei lesen
+       while((text=br.readLine())!=null){
+         
+ //jede Zeile mithilfe der Kommas auftrennen
+       subtext = splitTokens(text,",");
+       }
+       
+       }catch(FileNotFoundException e){
+         
+       e.printStackTrace();
+       
+       }catch(IOException e){
+        
+       e.printStackTrace();
+       
+        }finally{
+       try {
+       if (br != null){
+        br.close();
+       }
+       } catch (IOException e) {
+     e.printStackTrace();
+   }
+ }
+}
+
+//________________________________________________________________________________________
+//motor 90 degree old
+
+void setup() {
+  
+pinMode(4, OUTPUT);
+pinMode(5, OUTPUT);
+pinMode(6, OUTPUT);
+pinMode(7, OUTPUT);
+digitalWrite(4, LOW);
+digitalWrite(5, LOW);
+digitalWrite(6, LOW);
+digitalWrite(7, LOW);
+
+}
+
+void loop() {
+  
+// 125=2000 steps per revolution.
+//4/4 wegen 1/4 Umdrehung und 4 Anschlüssen
+
+for(int i=0; i<125; i++){
+digitalWrite(4, HIGH);
+digitalWrite(5, HIGH);
+digitalWrite(6, LOW);
+digitalWrite(7, LOW);
+delay(5);
+digitalWrite(4, LOW);
+digitalWrite(5, HIGH);
+digitalWrite(6, HIGH);
+digitalWrite(7, LOW);
+delay(5);
+digitalWrite(4, LOW);
+digitalWrite(5, LOW);
+digitalWrite(6, HIGH);
+digitalWrite(7, HIGH);
+delay(5);
+digitalWrite(4, HIGH);
+digitalWrite(5, LOW);
+digitalWrite(6, LOW);
+digitalWrite(7, HIGH);
+delay(5);
+}
+digitalWrite(4, LOW);
+digitalWrite(5, LOW);
+digitalWrite(6, LOW);
+digitalWrite(7, LOW);
+delay(1000);
+
+
+for(int i=0; i<125; i++){
+digitalWrite(4, HIGH);
+digitalWrite(5, LOW);
+digitalWrite(6, LOW);
+digitalWrite(7, HIGH);
+delay(5);
+digitalWrite(4, LOW);
+digitalWrite(5, LOW);
+digitalWrite(6, HIGH);
+digitalWrite(7, HIGH);
+delay(5);
+digitalWrite(4, LOW);
+digitalWrite(5, HIGH);
+digitalWrite(6, HIGH);
+digitalWrite(7, LOW);
+delay(5);
+digitalWrite(4, HIGH);
+digitalWrite(5, HIGH);
+digitalWrite(6, LOW);
+digitalWrite(7, LOW);
+delay(5);
+}
+}
+
+//_____________________________________________________________________________
+//motor 90 degree new
+
+#include <Stepper.h>
+
+Stepper stepper(2200,4,5,6,7);
+
+void setup() {
+  
+  stepper.setSpeed(5);
+  
+}
+
+void loop() {
+  
+  
+ stepper.step(525);
+ delay(2000);
+ 
+ for(int i=0; i<150; i++){
+  digitalWrite(4, HIGH);
+  digitalWrite(5, LOW);
+  digitalWrite(6, LOW);
+  digitalWrite(7, HIGH);
+  delay(5);
+  digitalWrite(4, LOW);
+  digitalWrite(5, LOW);
+  digitalWrite(6, HIGH);
+  digitalWrite(7, HIGH);
+  delay(5);
+  digitalWrite(4, LOW);
+  digitalWrite(5, HIGH);
+  digitalWrite(6, HIGH);
+  digitalWrite(7, LOW);
+   delay(5);
+  digitalWrite(4, HIGH);
+  digitalWrite(5, HIGH);
+  digitalWrite(6, LOW);
+  digitalWrite(7, LOW);
+  delay(5);
+  }
+  digitalWrite(4, LOW);
+  digitalWrite(5, LOW);
+  digitalWrite(6, LOW);
+  digitalWrite(7, LOW);
+  delay(2000);
+            
+            
+}
+
+//___________________________________________________________________________
+//motor parameters from .txt 
+
+#include <Stepper.h>
+
+Stepper stepper(2000,4,5,6,7);
+
+
+int calculatedSteps = 0;
+
+void setup() {
+  
+  stepper.setSpeed(6);
+  
+  Serial.begin(9600);
+   
+}
+
+void loop() {
+  
+  byte angle;
+  
+     if (Serial.available()) {
+       angle = Serial.read(); //neuestes Byte lesen und in angle speichern
+       Serial.println(angle);
+       angle=angle-'0'; //0 von Byte abziehen um eine Nummer aus Text zu machen
+ 
+       if(angle < 360){
+            int calculatedSteps = angle * 60;
+            stepper.step(calculatedSteps);
+            delay(2000);   
+           
+            
+           }
+    
+  }
+}
+
+     
+
